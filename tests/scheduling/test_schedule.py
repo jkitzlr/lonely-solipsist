@@ -1,4 +1,5 @@
-import numpy as np
+from typing import TYPE_CHECKING
+
 import pytest
 from pendulum.date import Date
 from pendulum.duration import Duration
@@ -7,6 +8,9 @@ from quant_py.scheduling.adjuster import BusdayConvention
 from quant_py.scheduling.period import Period
 from quant_py.scheduling.roll_convention import Bom, DayOfMonth, Eom, RollConventions
 from quant_py.scheduling.schedule import Schedule
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 @pytest.fixture
