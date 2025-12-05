@@ -32,6 +32,16 @@ def long_period() -> Period:
     )
 
 
+@pytest.fixture
+def short_period() -> Period:
+    return Period(
+        start=Date(2025, 4, 1),
+        end=Date(2025, 8, 15),
+        unadj_start=Date(2025, 4, 1),
+        unadj_end=Date(2025, 8, 15),
+    )
+
+
 @pytest.mark.unit
 def test_length_in_days(regular_period: Period) -> None:
     assert regular_period.length_in_days == 179
@@ -69,3 +79,57 @@ def test_is_regular_stub(long_period: Period) -> None:
     roll_conv = DayOfMonth(15)
     tenor = Duration(months=6)
     assert not long_period.is_regular(roll_conv, tenor)
+
+
+def test_is_stub_regular(regular_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert not regular_period.is_stub(roll_conv, tenor)
+
+
+def test_is_stub_long(long_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert long_period.is_stub(roll_conv, tenor)
+
+
+def test_is_stub_short(short_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert short_period.is_stub(roll_conv, tenor)
+
+
+def test_is_short_stub_regular(regular_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert not regular_period.is_short_stub(roll_conv, tenor)
+
+
+def test_is_short_stub_long(long_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert not long_period.is_short_stub(roll_conv, tenor)
+
+
+def test_is_short_stub_short(short_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert short_period.is_short_stub(roll_conv, tenor)
+
+
+def test_is_long_stub_regular(regular_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert not regular_period.is_long_stub(roll_conv, tenor)
+
+
+def test_is_long_stub_long(long_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert long_period.is_long_stub(roll_conv, tenor)
+
+
+def test_is_long_stub_short(short_period: Period) -> None:
+    roll_conv = DayOfMonth(15)
+    tenor = Duration(months=6)
+    assert not short_period.is_long_stub(roll_conv, tenor)

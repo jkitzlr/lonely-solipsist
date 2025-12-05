@@ -73,3 +73,45 @@ class Period:
         return (self.unadj_end == roll_conv.next(self.unadj_start, tenor)) and (
             self.unadj_start == roll_conv.previous(self.unadj_end, tenor)
         )
+
+    def is_stub(self: Self, roll_conv: RollConventions, tenor: Duration) -> bool:
+        """Determine if this period represents a stub period.
+
+        Args:
+            roll_conv: The roll conventions to generate regular dates.
+            tenor: The tenor/period between successive regular dates.
+
+        Returns:
+            Indicator for whether the period is a stub.
+        """
+        return not self.is_regular(roll_conv, tenor)
+
+    def is_long_stub(self: Self, roll_conv: RollConventions, tenor: Duration) -> bool:
+        """Determine if this period represents a long stub period.
+
+        Args:
+            roll_conv: The roll conventions to generate regular dates.
+            tenor: The tenor/period between successive regular dates.
+
+        Returns:
+            Indicator for whether the period is a stub.
+        """
+        if self.is_regular(roll_conv, tenor):
+            return False
+
+        return roll_conv.next(self.unadj_start, tenor) < self.unadj_end
+
+    def is_short_stub(self: Self, roll_conv: RollConventions, tenor: Duration) -> bool:
+        """Determine if this period represents a short stub period.
+
+        Args:
+            roll_conv: The roll conventions to generate regular dates.
+            tenor: The tenor/period between successive regular dates.
+
+        Returns:
+            Indicator for whether the period is a stub.
+        """
+        if self.is_regular(roll_conv, tenor):
+            return False
+
+        return roll_conv.next(self.unadj_start, tenor) > self.unadj_end
