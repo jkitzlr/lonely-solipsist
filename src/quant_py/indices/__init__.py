@@ -1,0 +1,1 @@
+"""Different rate index types."""

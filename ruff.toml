@@ -8,6 +8,7 @@ extend-ignore = ["COM812", "FIX002", "TD003", "PLR0913"]
 [lint.per-file-ignores]
 "src/quant_py/scheduling/roll_convention.py" = ["PLW1641"]
 "tests/**/*.py" = ["D", "DTZ", "PLR2004", "S101", "SLF001"]
+"examples/**/*.py" = ["D", "INP001", "T201", "T203"]
 
 [pydocstyle]
 convention = "google"
