@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING, Self, override
 
-from quant_py.daycounter._base import Daycounter
+from quant_py.daycounter import Daycounter
 
 if TYPE_CHECKING:
     from pendulum.date import Date

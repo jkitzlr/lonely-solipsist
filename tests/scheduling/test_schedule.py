@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @pytest.fixture
 def schedule_semiannual_reg(sifma: np.busdaycalendar) -> Schedule:
-    return Schedule(
+    return Schedule.of(
         effective=Date(2025, 8, 15),
         termination=Date(2027, 8, 15),
         tenor=Duration(months=6),
@@ -26,7 +26,7 @@ def schedule_semiannual_reg(sifma: np.busdaycalendar) -> Schedule:
 
 @pytest.fixture
 def schedule_semiannual_long_front(sifma: np.busdaycalendar) -> Schedule:
-    return Schedule(
+    return Schedule.of(
         effective=Date(2025, 1, 10),
         front_stub=Date(2025, 8, 15),
         termination=Date(2027, 8, 15),
@@ -38,7 +38,7 @@ def schedule_semiannual_long_front(sifma: np.busdaycalendar) -> Schedule:
 
 @pytest.fixture
 def schedule_semiannual_short_back(sifma: np.busdaycalendar) -> Schedule:
-    return Schedule(
+    return Schedule.of(
         effective=Date(2025, 8, 15),
         back_stub=Date(2027, 2, 15),
         termination=Date(2027, 7, 31),

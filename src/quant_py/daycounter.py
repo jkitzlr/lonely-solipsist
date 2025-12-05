@@ -1,3 +1,5 @@
+"""Define the interface for a daycounter."""
+
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Self
 
@@ -8,7 +10,7 @@ if TYPE_CHECKING:
 class Daycounter(ABC):
     """Interface for daycounter classes."""
 
-    def __call__(self: Self, start: Date, end: Date) -> float:
+    def __call__(self: Self, start: Date, end: Date) -> float:  # noqa: D102
         return self.count(start, end)
 
     @abstractmethod

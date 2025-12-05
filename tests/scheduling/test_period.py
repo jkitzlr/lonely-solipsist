@@ -4,12 +4,12 @@ import pytest
 from pendulum.date import Date
 from pendulum.duration import Duration
 
-from quant_py.daycounter.act360 import Act360
+from quant_py.daycounters.act360 import Act360
 from quant_py.scheduling.period import Period
 from quant_py.scheduling.roll_convention import DayOfMonth
 
 if TYPE_CHECKING:
-    from quant_py.daycounter._base import Daycounter
+    from quant_py.daycounter import Daycounter
 
 
 @pytest.fixture

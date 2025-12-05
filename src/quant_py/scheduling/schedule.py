@@ -1,5 +1,6 @@
 """Scheudle class."""
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Self
 
 from quant_py.scheduling.adjuster import Adjuster, BusdayConvention
@@ -12,33 +13,58 @@ if TYPE_CHECKING:
     from pendulum.duration import Duration
 
 
-# TODO(jkitzlr): make properties settable(?)
+@dataclass(
+    init=True,
+    frozen=True,
+    slots=True,
+    weakref_slot=False,
+)
 class Schedule:
     """Schedule. WIP."""
 
-    # TODO(jkitzlr): make this a class constructor, __init__ take final attribs(?)
-    def __init__(
-        self: Self,
+    periods: list[Period]
+    roll_conv: RollConventions
+    adjuster: Adjuster
+    tenor: Duration
+
+    @classmethod
+    def of(
+        cls: type[Self],
         effective: Date,
         termination: Date,
         tenor: Duration,
         pay_cal: np.busdaycalendar,
         busday_conv: BusdayConvention,
-        front_stub: Date | None = None,  # ? rename to first reg pmt?
+        front_stub: Date | None = None,
         back_stub: Date | None = None,
         *,
         eom: bool = False,
         bom: bool = False,
-    ) -> None:
-        """TBD."""
+    ) -> Self:
+        """Construct the Schedule object from conventions.
+
+        Args:
+            effective: Start date of the schedule.
+            termination: End date of the schedule.
+            tenor: The time interval between successive dates in the schedule.
+            pay_cal: Busday calendar to use to adjust schedule dates to busdays.
+            busday_conv: The busday adjust convention.
+            front_stub: First reg payment date (e.g. front is stub). Defaults to None.
+            back_stub: The last reg payment date (e.g. back is stub). Defaults to None.
+            eom: Whether to roll dates to last cal day of month. Defaults to False.
+            bom: Whether to roll dates to first cal day of month. Defaults to False.
+
+        Returns:
+            Schedule.
+        """
         adjuster = Adjuster(calendar=pay_cal, busday_conv=busday_conv)
 
-        self._periods: list[Period] = []
+        periods: list[Period] = []
 
         start = effective
         # handle case where there's a front stub
         if front_stub is not None:
-            self._periods.append(
+            periods.append(
                 Period(
                     start=adjuster.adjust(effective),
                     end=adjuster.adjust(front_stub),
@@ -48,13 +74,13 @@ class Schedule:
             )
             start = front_stub
 
-        roll_conv = self._get_roll_conv(start, eom=eom, bom=bom)
+        roll_conv = cls._get_roll_conv(start, eom=eom, bom=bom)
         end = back_stub or termination
 
         dt = start
         while dt < end:
             p_end = roll_conv.next(dt, tenor)
-            self._periods.append(
+            periods.append(
                 Period(
                     start=adjuster.adjust(dt),
                     end=adjuster.adjust(p_end),
@@ -66,7 +92,7 @@ class Schedule:
 
         # handle back stubs
         if back_stub is not None:
-            self._periods.append(
+            periods.append(
                 Period(
                     start=adjuster.adjust(back_stub),
                     end=adjuster.adjust(termination),
@@ -75,30 +101,12 @@ class Schedule:
                 )
             )
 
-        self._tenor = tenor
-        self._busday_conv = busday_conv
-        self._adjuster = adjuster
-        self._roll_conv = roll_conv
-
-    @property
-    def periods(self: Self) -> list[Period]:
-        """Get the list of schedule periods."""
-        return self._periods.copy()
-
-    @property
-    def roll_convention(self: Self) -> RollConventions:  # pragma: no cover
-        """Get the roll convention used to build the schedule."""
-        return self._roll_conv
-
-    @property
-    def adjuster(self: Self) -> Adjuster:  # pragma: no cover
-        """Get the busday adjuster used to generate the schedule."""
-        return self._adjuster
-
-    @property
-    def tenor(self: Self) -> Duration:  # pragma: no cover
-        """Get the period Tenor used to build the schedule."""
-        return self._tenor
+        return cls(
+            periods=periods,
+            roll_conv=roll_conv,
+            adjuster=adjuster,
+            tenor=tenor,
+        )
 
     @staticmethod
     def _get_roll_conv(start: Date, *, eom: bool, bom: bool) -> RollConventions:

@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from pendulum.date import Date
     from pendulum.duration import Duration
 
-    from quant_py.daycounter._base import Daycounter
+    from quant_py.daycounter import Daycounter
     from quant_py.scheduling.roll_convention import RollConventions
 
 
